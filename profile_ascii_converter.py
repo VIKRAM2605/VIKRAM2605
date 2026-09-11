@@ -13,57 +13,81 @@ from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 
 DEFAULT_GITHUB_USER = "VIKRAM2605"
+DETAIL_CHARS = " .,:;-~=+*#%@"
 
 
 def resize_image(image: Image.Image, width: int) -> Image.Image:
     aspect_ratio = image.height / image.width
-    height = max(1, int(width * aspect_ratio * 0.46))
+    height = max(1, int(width * aspect_ratio * 0.34))
     return image.resize((width, height))
 
 
-def tone_to_char(pixel: int, row_index: int, total_rows: int) -> str:
-    hair_band = row_index < max(1, int(total_rows * 0.42))
+def block_to_char(block: list[int], row_index: int, total_rows: int) -> str:
+    average = sum(block) / len(block)
+    spread = max(block) - min(block)
+    hair_band = row_index < max(1, int(total_rows * 0.4))
+
+    if average < 90:
+        return " "
 
     if hair_band:
-        if pixel < 90:
-            return " "
-        if pixel < 115:
-            return ":"
-        if pixel < 140:
-            return "-"
-        if pixel < 165:
-            return "="
-        if pixel < 190:
-            return "+"
-        if pixel < 220:
+        if spread > 80:
+            return "/" if block[0] < block[-1] else "\\"
+        if average < 120:
             return "."
-        return " "
-
-    if pixel < 128:
-        return " "
-    if pixel < 154:
+        if average < 145:
+            return ":"
+        if average < 170:
+            return "-"
+        if average < 195:
+            return "="
+        if average < 220:
+            return "+"
         return "."
-    if pixel < 180:
+
+    if spread > 70:
         return ":"
-    if pixel < 205:
+    if average < 135:
+        return "."
+    if average < 160:
+        return ":"
+    if average < 185:
         return "-"
-    if pixel < 230:
+    if average < 210:
         return "="
+    if average < 235:
+        return "+"
     return " "
+
+
+def sample_block(pixels: bytes, image_width: int, x: int, y: int, block_size: int) -> list[int]:
+    values: list[int] = []
+    for row in range(block_size):
+        base = (y + row) * image_width + x
+        values.extend(pixels[base : base + block_size])
+    return values
 
 
 def to_ascii(image: Image.Image, width: int) -> str:
     processed = ImageOps.autocontrast(image.convert("L"))
-    processed = ImageEnhance.Contrast(processed).enhance(1.2)
+    processed = ImageEnhance.Contrast(processed).enhance(1.28)
+    processed = ImageEnhance.Sharpness(processed).enhance(1.35)
     processed = processed.filter(ImageFilter.SHARPEN)
     resized = resize_image(processed, width)
-    pixels = resized.tobytes()
+    block_size = 2 if width >= 64 else 1
+    sampled_width = max(1, resized.width // block_size)
+    sampled_height = max(1, resized.height // block_size)
+    sampled = processed.resize((sampled_width * block_size, sampled_height * block_size))
+    pixels = sampled.tobytes()
     rows = []
-    total_rows = len(pixels) // width
+    total_rows = sampled.height // block_size
 
-    for row_index, index in enumerate(range(0, len(pixels), width)):
-        row_pixels = pixels[index : index + width]
-        rows.append("".join(tone_to_char(pixel, row_index, total_rows) for pixel in row_pixels))
+    for row_index in range(0, sampled.height, block_size):
+        row_chars = []
+        for col_index in range(0, sampled.width, block_size):
+            block = sample_block(pixels, sampled.width, col_index, row_index, block_size)
+            row_chars.append(block_to_char(block, row_index // block_size, total_rows))
+        rows.append("".join(row_chars))
 
     return "\n".join(rows)
 

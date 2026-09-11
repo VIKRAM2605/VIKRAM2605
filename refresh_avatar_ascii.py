@@ -23,7 +23,7 @@ def main() -> int:
         github_user = DEFAULT_GITHUB_USER
 
     with load_image(Args()) as image:
-        ascii_art = to_ascii(image, 96)
+        ascii_art = to_ascii(image, 72)
 
     readme = README_PATH.read_text(encoding="utf-8")
     start = readme.index(START_MARKER)
