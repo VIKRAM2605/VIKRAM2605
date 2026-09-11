@@ -6,26 +6,45 @@
 
 ---
 
-### 🖼️ GitHub Avatar in ASCII
+### `about.json`
 
-<!-- avatar-ascii:start -->
-```text
-.............\\\\ \\\\\\\...........
-.......\\\                \.........
-........                    +.......
-........           /:      /........
-        :  ......--.....: :         
-        : ::::::.::...::: :         
-         ::::==:....:--:::          
-          +::::::::....::           
-           :....:::....::           
-     ::::   :---:::::-.:  :::       
-::           .::----::.         ::::
-              :.  :..               
+```json
+{
+  "name": "Vikram Suresh",
+  "status": "CS student at BITS",
+  "location": "India",
+  "focus": [
+    "placements",
+    "systems programming",
+    "web and mobile apps",
+    "game development"
+  ],
+  "currently_building": [
+    "MAXDrive - a React + Capacitor dashboard for aftermarket Android head units",
+    "DPLL SAT Solver in C",
+    "2D action RPG in Unity",
+    "fleet/logistics tracking web app"
+  ],
+  "stack": [
+    "React",
+    "Three.js",
+    "Unity",
+    "C#",
+    "C",
+    "JavaScript",
+    "TypeScript",
+    "Node.js",
+    "Git",
+    "Linux"
+  ],
+  "strengths": [
+    "self-taught",
+    "builder mindset",
+    "cross-domain curiosity"
+  ],
+  "goal": "ship cool things that feel polished and useful"
+}
 ```
-<!-- avatar-ascii:end -->
-
-<p align="center"><i>Generated from the live GitHub avatar for VIKRAM2605 and refreshed automatically.</i></p>
 
 ### 🚧 What I'm building
 
@@ -55,15 +74,3 @@
 ---
 
 <p align="center"><i>Self-taught across game dev, systems programming, and web/mobile — currently prepping for placements.</i></p>
-
-## ASCII Converter
-
-Use the included CLI to regenerate the ASCII portrait from the live GitHub avatar whenever you update your profile image.
-
-The profile page does not execute Python at render time, so the ASCII block is refreshed by a GitHub Action and committed back into this README.
-
-```bash
-python profile_ascii_converter.py --github-user VIKRAM2605 --width 90 --output profile-ascii.txt
-```
-
-If you omit `--output`, the ASCII art prints directly to the terminal. You can still pass a local image path as the optional positional argument if you want to convert a file instead of the live avatar.
