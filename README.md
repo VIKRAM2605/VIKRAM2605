@@ -1,4 +1,10 @@
-# Hi, I'm Vikram Suresh👋
+<h1 align="center">Hi, I'm Vikram Suresh👋</h1>
+
+<p align="center">
+  <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&size=20&pause=1000&color=58A6FF&center=true&vCenter=true&width=500&lines=CS+student+at+BITS;Building+MAXDrive+%E2%80%94+car+infotainment+dashboards;Writing+a+DPLL+SAT+solver+in+C;Self-taught+across+Unity%2C+React%2C+Three.js" alt="Typing SVG" />
+</p>
+
+---
 
 ### 🚧 What I'm building
 
