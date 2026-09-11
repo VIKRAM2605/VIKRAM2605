@@ -12,7 +12,6 @@ from urllib.request import urlopen
 from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 
-ASCII_CHARS = "@%#*+=-:. `^\",;!i1lI~+_-?][}{1)(|\\/*tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 DEFAULT_GITHUB_USER = "VIKRAM2605"
 
 
@@ -22,18 +21,31 @@ def resize_image(image: Image.Image, width: int) -> Image.Image:
     return image.resize((width, height))
 
 
+def tone_to_char(pixel: int) -> str:
+    if pixel < 100 or pixel > 245:
+        return " "
+    if pixel < 130:
+        return "."
+    if pixel < 160:
+        return ":"
+    if pixel < 190:
+        return "-"
+    if pixel < 220:
+        return "="
+    return "+"
+
+
 def to_ascii(image: Image.Image, width: int) -> str:
     processed = ImageOps.autocontrast(image.convert("L"))
-    processed = ImageEnhance.Contrast(processed).enhance(1.35)
+    processed = ImageEnhance.Contrast(processed).enhance(1.15)
     processed = processed.filter(ImageFilter.SHARPEN)
     resized = resize_image(processed, width)
     pixels = resized.tobytes()
-    scale = (len(ASCII_CHARS) - 1) / 255
     rows = []
 
     for index in range(0, len(pixels), width):
         row_pixels = pixels[index : index + width]
-        rows.append("".join(ASCII_CHARS[int(pixel * scale)] for pixel in row_pixels))
+        rows.append("".join(tone_to_char(pixel) for pixel in row_pixels))
 
     return "\n".join(rows)
 
