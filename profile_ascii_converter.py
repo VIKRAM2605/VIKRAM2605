@@ -21,31 +21,49 @@ def resize_image(image: Image.Image, width: int) -> Image.Image:
     return image.resize((width, height))
 
 
-def tone_to_char(pixel: int) -> str:
-    if pixel < 100 or pixel > 245:
+def tone_to_char(pixel: int, row_index: int, total_rows: int) -> str:
+    hair_band = row_index < max(1, int(total_rows * 0.42))
+
+    if hair_band:
+        if pixel < 90:
+            return " "
+        if pixel < 115:
+            return ":"
+        if pixel < 140:
+            return "-"
+        if pixel < 165:
+            return "="
+        if pixel < 190:
+            return "+"
+        if pixel < 220:
+            return "."
         return " "
-    if pixel < 130:
+
+    if pixel < 128:
+        return " "
+    if pixel < 154:
         return "."
-    if pixel < 160:
+    if pixel < 180:
         return ":"
-    if pixel < 190:
+    if pixel < 205:
         return "-"
-    if pixel < 220:
+    if pixel < 230:
         return "="
-    return "+"
+    return " "
 
 
 def to_ascii(image: Image.Image, width: int) -> str:
     processed = ImageOps.autocontrast(image.convert("L"))
-    processed = ImageEnhance.Contrast(processed).enhance(1.15)
+    processed = ImageEnhance.Contrast(processed).enhance(1.2)
     processed = processed.filter(ImageFilter.SHARPEN)
     resized = resize_image(processed, width)
     pixels = resized.tobytes()
     rows = []
+    total_rows = len(pixels) // width
 
-    for index in range(0, len(pixels), width):
+    for row_index, index in enumerate(range(0, len(pixels), width)):
         row_pixels = pixels[index : index + width]
-        rows.append("".join(tone_to_char(pixel) for pixel in row_pixels))
+        rows.append("".join(tone_to_char(pixel, row_index, total_rows) for pixel in row_pixels))
 
     return "\n".join(rows)
 
