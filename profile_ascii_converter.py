@@ -9,21 +9,24 @@ from pathlib import Path
 from urllib.error import URLError
 from urllib.request import urlopen
 
-from PIL import Image
+from PIL import Image, ImageEnhance, ImageFilter, ImageOps
 
 
-ASCII_CHARS = "@%#*+=-:. "
+ASCII_CHARS = "@%#*+=-:. `^\",;!i1lI~+_-?][}{1)(|\\/*tfjrxnuvczXYUJCLQ0OZmwqpdbkhao*#MW&8%B@$"
 DEFAULT_GITHUB_USER = "VIKRAM2605"
 
 
 def resize_image(image: Image.Image, width: int) -> Image.Image:
     aspect_ratio = image.height / image.width
-    height = max(1, int(width * aspect_ratio * 0.5))
+    height = max(1, int(width * aspect_ratio * 0.46))
     return image.resize((width, height))
 
 
 def to_ascii(image: Image.Image, width: int) -> str:
-    resized = resize_image(image.convert("L"), width)
+    processed = ImageOps.autocontrast(image.convert("L"))
+    processed = ImageEnhance.Contrast(processed).enhance(1.35)
+    processed = processed.filter(ImageFilter.SHARPEN)
+    resized = resize_image(processed, width)
     pixels = resized.tobytes()
     scale = (len(ASCII_CHARS) - 1) / 255
     rows = []
